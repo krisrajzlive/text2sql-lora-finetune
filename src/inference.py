@@ -18,10 +18,14 @@ class Text2SQL:
         self.model = PeftModel.from_pretrained(base, adapter).to(self.device).eval()
 
     @torch.no_grad()
-    def generate(self, question, schema, max_new_tokens=128):
+    def generate(self, question, schema, max_new_tokens=128, use_adapter=True):
+        """With use_adapter=False the LoRA weights are bypassed, giving the plain base model."""
         prompt = prompt_text(self.tok, {"question": question, "context": schema})
         enc = self.tok(prompt, return_tensors="pt", add_special_tokens=False).to(self.device)
-        out = self.model.generate(
-            **enc, max_new_tokens=max_new_tokens, do_sample=False, pad_token_id=self.tok.pad_token_id
-        )
+        kwargs = dict(max_new_tokens=max_new_tokens, do_sample=False, pad_token_id=self.tok.pad_token_id)
+        if use_adapter:
+            out = self.model.generate(**enc, **kwargs)
+        else:
+            with self.model.disable_adapter():
+                out = self.model.generate(**enc, **kwargs)
         return self.tok.decode(out[0, enc["input_ids"].shape[1]:], skip_special_tokens=True).strip()

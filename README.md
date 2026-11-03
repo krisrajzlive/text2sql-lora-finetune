@@ -117,6 +117,13 @@ python infer.py --interactive --schema-file schema.sql     # ask several questio
 
 Use `--adapter outputs/qwen25-1p5b-text2sql/adapter` to run a local adapter instead of the Hub one.
 
+**Base vs fine-tuned, side by side** (the adapter is switched off for the "base" output, so one model load serves both):
+
+```bash
+python compare.py                      # built-in example questions
+python compare.py --heldout 5          # held-out dataset rows with the gold SQL (needs `pip install datasets pyyaml`)
+```
+
 **Through the API** (after `docker compose up`):
 
 ```bash
@@ -147,6 +154,7 @@ src/data.py     dataset loading and label masking
 src/inference.py  base model + adapter loader
 train.py  eval.py  publish.py  check_hf.py
 infer.py        run the fine-tuned model directly from the command line
+compare.py      base vs fine-tuned output side by side
 serve/api.py    FastAPI service
 ui/app.py       Streamlit front end
 client.py       CLI client
