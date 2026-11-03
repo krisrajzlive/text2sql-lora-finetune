@@ -4,7 +4,7 @@ services:
     environment:
       ADAPTER_ID: ${ADAPTER_ID:?set ADAPTER_ID to your Hub repo id, e.g. user/text2sql-qwen25-1p5b-lora}
       BASE_MODEL: ${BASE_MODEL:-Qwen/Qwen2.5-1.5B-Instruct}
-      HF_TOKEN: ${HF_TOKEN:-}
+      HF_TOKEN: ${HF_TOKEN:-${HUGGINGFACE_API_KEY:-}}
     ports: ["8000:8000"]
     volumes: ["models:/models"]
     healthcheck:

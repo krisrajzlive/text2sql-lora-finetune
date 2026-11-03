@@ -66,7 +66,8 @@ def main():
         metrics = (f"## Evaluation\n\nExact match on {r['n']} held-out examples: "
                    f"base **{r['base_em']:.3f}**, fine-tuned **{r['tuned_em']:.3f}**.\n\n")
 
-    api = HfApi(token=os.environ.get("HF_TOKEN"))  # falls back to a cached login
+    token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_API_KEY")
+    api = HfApi(token=token)  # falls back to a cached login when None
     api.create_repo(args.repo_id, private=args.private, exist_ok=True)
     api.upload_folder(repo_id=args.repo_id, folder_path=adapter)
     with tempfile.TemporaryDirectory() as d:
