@@ -12,8 +12,6 @@ import argparse
 import os
 import sys
 
-from src.inference import Text2SQL
-
 DEFAULT_ADAPTER = "krisrajz/text2sql-qwen25-1p5b-lora"
 DEFAULT_BASE = "Qwen/Qwen2.5-1.5B-Instruct"
 
@@ -36,6 +34,8 @@ def main():
         ap.error("provide --schema or --schema-file")
     if not args.question and not args.interactive:
         ap.error("provide a question or --interactive")
+
+    from src.inference import Text2SQL  # heavy import (torch) deferred so --help and arg errors are instant
 
     print(f"Loading {args.base_model} + {args.adapter} ...", file=sys.stderr)
     model = Text2SQL(args.base_model, args.adapter)
