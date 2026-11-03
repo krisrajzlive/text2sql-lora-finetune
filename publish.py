@@ -36,7 +36,20 @@ The prompt template is defined in the training repository (`src/prompt.py`).
 """
 
 
+def load_env(path=".env"):
+    """Minimal .env loader: KEY=VALUE lines; existing environment variables win."""
+    if not os.path.exists(path):
+        return
+    for line in open(path):
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            key, value = line.split("=", 1)
+            if value.strip():
+                os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
 def main():
+    load_env()
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument("--repo-id", required=True)

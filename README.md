@@ -24,10 +24,11 @@ On out-of-memory errors lower `per_device_batch_size` (raise `grad_accum_steps` 
 
 ## 2. Publish the adapter
 
-Create a Hugging Face access token with write permission and keep it out of the repo.
+Create a Hugging Face access token with write permission. Put it in a git-ignored `.env` file
+(`cp .env.example .env`, then edit `HF_TOKEN=`); `publish.py` and `docker compose` read it automatically.
+You can also `export HF_TOKEN=...` instead.
 
 ```bash
-export HF_TOKEN=<your token>
 python publish.py --config configs/qwen25_1p5b.yaml --repo-id <hf-user>/text2sql-qwen25-1p5b-lora
 ```
 
@@ -37,8 +38,9 @@ This uploads the adapter and a model card containing the eval numbers (use `--pr
 
 Any machine with Docker works; no GPU is required (CPU is slower, roughly seconds per query).
 
+Set `ADAPTER_ID` in `.env` (or export it), then:
+
 ```bash
-export ADAPTER_ID=<hf-user>/text2sql-qwen25-1p5b-lora
 docker compose up --build
 ```
 
