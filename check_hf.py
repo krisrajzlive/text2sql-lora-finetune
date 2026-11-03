@@ -20,8 +20,8 @@ else:
             continue
         if "=" in line:
             key, value = line.split("=", 1)
-            print(f"  {n}: key={key!r} value_len={len(value)} stray_quote_or_space="
-                  f"{any(c in value for c in ' \"' + chr(39))}")
+            stray = any(c in value for c in " \"'")
+            print(f"  {n}: key={key!r} value_len={len(value)} stray_quote_or_space={stray}")
         else:
             print(f"  {n}: no '=' sign (line length {len(line)}); expected KEY=value")
 
