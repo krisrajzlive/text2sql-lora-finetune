@@ -1,0 +1,24 @@
+# Tuned for a single Tesla T4 (15 GB, fp16 only, no bf16).
+model_name: Qwen/Qwen2.5-1.5B-Instruct
+dataset: b-mc2/sql-create-context
+train_samples: 6000
+eval_samples: 200
+seed: 42
+max_length: 512
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+train:
+  output_dir: outputs/qwen25-1p5b-text2sql
+  epochs: 1
+  per_device_batch_size: 4
+  grad_accum_steps: 4
+  learning_rate: 2.0e-4
+  warmup_ratio: 0.03
+  logging_steps: 10
+  save_steps: 100        # frequent checkpoints: workspace sessions can expire
+  save_total_limit: 2

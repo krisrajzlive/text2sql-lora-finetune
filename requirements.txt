@@ -1,0 +1,6 @@
+transformers>=4.46
+peft>=0.13
+datasets>=3.0
+accelerate>=1.0
+pyyaml
+# torch is expected to be preinstalled with CUDA in the GPU workspace
