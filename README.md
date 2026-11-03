@@ -106,6 +106,19 @@ For a GPU host build the image with `--build-arg BASE=pytorch/pytorch:2.8.0-cuda
 
 ## 4. Use
 
+**Directly, without a server** (downloads the base model and the published adapter on first run; uses the GPU if present):
+
+```bash
+pip install -r requirements-serve.txt torch
+python infer.py "How many employees are in sales?" \
+  --schema "CREATE TABLE employees (id INT, name VARCHAR, department VARCHAR)"
+python infer.py --interactive --schema-file schema.sql     # ask several questions against one schema
+```
+
+Use `--adapter outputs/qwen25-1p5b-text2sql/adapter` to run a local adapter instead of the Hub one.
+
+**Through the API** (after `docker compose up`):
+
 ```bash
 python client.py "How many employees are in sales?" \
   --schema "CREATE TABLE employees (id INT, name VARCHAR, department VARCHAR)"
@@ -133,6 +146,7 @@ src/prompt.py   prompt template shared by train, eval and serving
 src/data.py     dataset loading and label masking
 src/inference.py  base model + adapter loader
 train.py  eval.py  publish.py  check_hf.py
+infer.py        run the fine-tuned model directly from the command line
 serve/api.py    FastAPI service
 ui/app.py       Streamlit front end
 client.py       CLI client
