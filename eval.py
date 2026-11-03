@@ -52,7 +52,7 @@ def main():
     _, eval_ds = load_splits(cfg)
     examples = [eval_ds[i] for i in range(len(eval_ds))]
 
-    base = AutoModelForCausalLM.from_pretrained(cfg["model_name"], torch_dtype=torch.float16).cuda().eval()
+    base = AutoModelForCausalLM.from_pretrained(cfg["model_name"], dtype=torch.float16).cuda().eval()
     base_preds = generate(base, tok, examples)
     base_em = score(base_preds, examples)
 

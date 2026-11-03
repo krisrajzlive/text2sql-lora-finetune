@@ -33,7 +33,7 @@ def main():
         tok.pad_token = tok.eos_token
 
     # T4 has no bf16: keep frozen base in fp16, LoRA weights train in fp32 (peft default).
-    model = AutoModelForCausalLM.from_pretrained(cfg["model_name"], torch_dtype=torch.float16).cuda()
+    model = AutoModelForCausalLM.from_pretrained(cfg["model_name"], dtype=torch.float16).cuda()
     model.gradient_checkpointing_enable()
     model.enable_input_require_grads()
     model = get_peft_model(
@@ -54,13 +54,16 @@ def main():
         remove_columns=train_ds.column_names,
     )
 
+    steps_per_epoch = -(-len(train_ds) // (tc["per_device_batch_size"] * tc["grad_accum_steps"]))
+    warmup_steps = max(1, int(tc["warmup_ratio"] * steps_per_epoch * tc["epochs"]))
+
     args_tr = TrainingArguments(
         output_dir=tc["output_dir"],
         num_train_epochs=tc["epochs"],
         per_device_train_batch_size=tc["per_device_batch_size"],
         gradient_accumulation_steps=tc["grad_accum_steps"],
         learning_rate=tc["learning_rate"],
-        warmup_ratio=tc["warmup_ratio"],
+        warmup_steps=warmup_steps,
         lr_scheduler_type="cosine",
         fp16=True,
         logging_steps=tc["logging_steps"],
