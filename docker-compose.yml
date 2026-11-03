@@ -1,0 +1,21 @@
+services:
+  api:
+    build: .
+    environment:
+      ADAPTER_ID: ${ADAPTER_ID:?set ADAPTER_ID to your Hub repo id, e.g. user/text2sql-qwen25-1p5b-lora}
+      BASE_MODEL: ${BASE_MODEL:-Qwen/Qwen2.5-1.5B-Instruct}
+    ports: ["8000:8000"]
+    volumes: ["models:/models"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      retries: 40
+  ui:
+    build: .
+    command: streamlit run ui/app.py --server.port 8501 --server.address 0.0.0.0
+    environment:
+      API_URL: http://api:8000
+    ports: ["8501:8501"]
+    depends_on: [api]
+volumes:
+  models:

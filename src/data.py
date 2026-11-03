@@ -1,21 +1,7 @@
-"""Dataset loading and prompt formatting for text-to-SQL."""
+"""Dataset loading and tokenization for text-to-SQL."""
 from datasets import load_dataset
 
-SYSTEM = "You translate questions into SQL using the given schema. Reply with SQL only."
-
-
-def build_messages(example):
-    user = f"Schema:\n{example['context']}\n\nQuestion: {example['question']}"
-    return [
-        {"role": "system", "content": SYSTEM},
-        {"role": "user", "content": user},
-    ]
-
-
-def prompt_text(tokenizer, example):
-    return tokenizer.apply_chat_template(
-        build_messages(example), tokenize=False, add_generation_prompt=True
-    )
+from src.prompt import prompt_text
 
 
 def load_splits(cfg):
