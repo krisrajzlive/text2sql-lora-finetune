@@ -70,7 +70,6 @@ def main():
         save_steps=tc["save_steps"],
         save_total_limit=tc["save_total_limit"],
         report_to="none",
-        group_by_length=True,
         seed=cfg["seed"],
     )
     trainer = Trainer(
